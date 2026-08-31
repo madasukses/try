@@ -23,15 +23,27 @@ Jangan lupa tambahkan Environment Variable `NEXT_PUBLIC_SHEETY_BASE_URL` di
 dashboard Vercel (Settings → Environment Variables) begitu Sheety sudah
 siap.
 
+## Alur halaman
+```
+/            → Pilih Paket: isi nama & email, lalu pilih paket try out
+/persiapan   → Persiapan Mengerjakan: info paket, passing grade, tombol mulai
+/ujian       → Mengerjakan: timer, soal, navigator nomor, submit
+/hasil       → Hasil: skor, benar/salah/kosong
+```
+
 ## Struktur project
 ```
 pages/
-  index.js   → halaman awal: nama, email, tata tertib, tombol mulai
-  ujian.js   → halaman ujian: timer, soal, navigator, submit
-  hasil.js   → halaman hasil: skor, benar/salah/kosong
+  index.js      → Pilih Paket (identitas peserta + kartu paket)
+  persiapan.js  → Persiapan Mengerjakan (info paket, passing grade, CTA mulai)
+  ujian.js      → halaman ujian: timer, soal, navigator, submit
+  hasil.js      → halaman hasil: skor, benar/salah/kosong
+components/
+  Breadcrumb.js → navigasi breadcrumb dipakai di semua halaman
 lib/
   sheety.js        → semua pemanggilan API ke Sheety
   soalFallback.js  → 10 soal contoh (mode demo)
+  paketConfig.js   → judul paket, durasi, passing grade (edit di sini)
 ```
 
 ## Yang perlu disesuaikan

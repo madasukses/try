@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Breadcrumb from '../components/Breadcrumb';
+import { PAKET } from '../lib/paketConfig';
 
 export default function Hasil() {
   const router = useRouter();
@@ -20,8 +22,8 @@ export default function Hasil() {
 
   if (!hasil) {
     return (
-      <div className="min-h-screen bg-navy-900 flex items-center justify-center">
-        <p className="text-navy-200 font-mono text-sm">Memuat hasil…</p>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <p className="text-slate-400 font-mono text-sm">Memuat hasil…</p>
       </div>
     );
   }
@@ -29,19 +31,27 @@ export default function Hasil() {
   return (
     <>
       <Head>
-        <title>Hasil Ujian — Tryout CPNS</title>
+        <title>Hasil — {PAKET.judul}</title>
       </Head>
-      <main className="min-h-screen bg-navy-900 flex items-center justify-center px-4 py-10">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-lg shadow-xl overflow-hidden">
-            <div className="bg-navy-700 px-6 py-5 text-center">
-              <p className="text-navy-200 text-xs font-mono tracking-wide">HASIL TRYOUT CPNS</p>
+      <main className="min-h-screen bg-slate-50 px-4 sm:px-6 py-8">
+        <div className="max-w-md mx-auto">
+          <Breadcrumb
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Persiapan Mengerjakan', href: '/persiapan' },
+              { label: 'Hasil' },
+            ]}
+          />
+
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-gradient-to-r from-brand-600 to-brand-800 px-6 py-5 text-center">
+              <p className="text-blue-100 text-xs font-bold tracking-wide">HASIL TRY OUT</p>
               <p className="text-white font-semibold mt-1">{peserta?.nama}</p>
             </div>
 
-            <div className="px-6 py-8 text-center border-b border-navy-100">
-              <p className="text-xs text-navy-500 mb-1">Skor Akhir</p>
-              <p className="text-6xl font-extrabold text-navy-800">{hasil.skor}</p>
+            <div className="px-6 py-8 text-center border-b border-slate-100">
+              <p className="text-xs text-slate-500 mb-1">Skor Akhir</p>
+              <p className="text-6xl font-extrabold text-navy-900">{hasil.skor}</p>
               {hasil.otomatis && (
                 <p className="text-xs text-amberx-600 mt-2">
                   Ujian diselesaikan otomatis karena waktu habis.
@@ -49,18 +59,18 @@ export default function Hasil() {
               )}
             </div>
 
-            <div className="grid grid-cols-3 divide-x divide-navy-100">
+            <div className="grid grid-cols-3 divide-x divide-slate-100">
               <div className="px-4 py-4 text-center">
                 <p className="text-2xl font-bold text-emeraldx-600">{hasil.benar}</p>
-                <p className="text-xs text-navy-500 mt-1">Benar</p>
+                <p className="text-xs text-slate-500 mt-1">Benar</p>
               </div>
               <div className="px-4 py-4 text-center">
                 <p className="text-2xl font-bold text-alarm-500">{hasil.salah}</p>
-                <p className="text-xs text-navy-500 mt-1">Salah</p>
+                <p className="text-xs text-slate-500 mt-1">Salah</p>
               </div>
               <div className="px-4 py-4 text-center">
-                <p className="text-2xl font-bold text-navy-400">{hasil.kosong}</p>
-                <p className="text-xs text-navy-500 mt-1">Kosong</p>
+                <p className="text-2xl font-bold text-slate-400">{hasil.kosong}</p>
+                <p className="text-xs text-slate-500 mt-1">Kosong</p>
               </div>
             </div>
 
@@ -71,7 +81,7 @@ export default function Hasil() {
                   sessionStorage.removeItem('tryout_hasil');
                   router.push('/');
                 }}
-                className="w-full bg-navy-800 hover:bg-navy-900 text-white font-semibold py-2.5 rounded text-sm"
+                className="w-full bg-navy-800 hover:bg-navy-900 text-white font-semibold py-2.5 rounded-lg text-sm"
               >
                 Kembali ke Beranda
               </button>

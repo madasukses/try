@@ -5,7 +5,7 @@
 html, body {
   padding: 0;
   margin: 0;
-  background-color: #f5f6f8;
+  background-color: #f8fafc;
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -21,17 +21,17 @@ html, body {
 
 /* number grid button states */
 .nomor-btn {
-  @apply flex items-center justify-center h-10 w-10 rounded text-sm font-medium border transition-colors;
+  @apply flex items-center justify-center h-9 w-9 rounded-lg text-sm font-medium border transition-colors;
 }
 .nomor-belum {
-  @apply bg-white border-navy-200 text-navy-700 hover:border-navy-400;
+  @apply bg-white border-slate-200 text-navy-600 hover:border-brand-300;
 }
 .nomor-dijawab {
-  @apply bg-emeraldx-500 border-emeraldx-500 text-white;
+  @apply bg-brand-600 border-brand-600 text-white;
 }
 .nomor-ragu {
   @apply bg-amberx-500 border-amberx-500 text-white;
 }
 .nomor-aktif {
-  @apply ring-2 ring-offset-2 ring-navy-700;
+  @apply ring-2 ring-offset-2 ring-navy-800;
 }
