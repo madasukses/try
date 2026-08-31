@@ -75,14 +75,21 @@ export default function Hasil() {
               </div>
             </div>
 
-            <div className="px-6 py-5">
+            <div className="px-6 py-5 space-y-2.5">
+              <button
+                onClick={() => router.push('/pembahasan')}
+                className="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 rounded-lg text-sm"
+              >
+                Lihat Pembahasan
+              </button>
               <button
                 onClick={() => {
                   sessionStorage.removeItem('tryout_peserta');
                   sessionStorage.removeItem('tryout_hasil');
+                  sessionStorage.removeItem('tryout_pembahasan');
                   router.push('/');
                 }}
-                className="w-full bg-navy-800 hover:bg-navy-900 text-white font-semibold py-2.5 rounded-lg text-sm"
+                className="w-full border border-slate-300 text-navy-700 font-semibold py-2.5 rounded-lg text-sm"
               >
                 Kembali ke Beranda
               </button>

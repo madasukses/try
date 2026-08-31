@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Breadcrumb from '../components/Breadcrumb';
 import { getSoal, kirimHasil } from '../lib/sheety';
-import { DURASI_DETIK, formatJudulPaket, ambilSoalPaket } from '../lib/paketConfig';
+import { DURASI_DETIK, formatJudulPaket, ambilSoalPaket, acakSoalStabil } from '../lib/paketConfig';
 
 const PILIHAN = ['A', 'B', 'C', 'D', 'E'];
 
@@ -53,7 +53,8 @@ export default function Ujian() {
     if (savedRagu) setRaguRagu(JSON.parse(savedRagu));
 
     getSoal().then((data) => {
-      setSoal(ambilSoalPaket(data, kode));
+      const soalPaket = ambilSoalPaket(data, kode);
+      setSoal(acakSoalStabil(soalPaket, 'tryout_urutan'));
       setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,6 +101,7 @@ export default function Ujian() {
     sessionStorage.removeItem('tryout_mulai_ts');
     sessionStorage.removeItem('tryout_jawaban');
     sessionStorage.removeItem('tryout_ragu');
+    sessionStorage.removeItem('tryout_urutan');
     router.push('/');
   }
 
@@ -135,9 +137,27 @@ export default function Ujian() {
       'tryout_hasil',
       JSON.stringify({ skor, benar, salah, kosong, total: soal.length, otomatis, kodePaket })
     );
+    sessionStorage.setItem(
+      'tryout_pembahasan',
+      JSON.stringify(
+        soal.map((s) => ({
+          id: s.id,
+          kategori: s.kategori,
+          soal: s.soal,
+          pilihanA: s.pilihanA,
+          pilihanB: s.pilihanB,
+          pilihanC: s.pilihanC,
+          pilihanD: s.pilihanD,
+          pilihanE: s.pilihanE,
+          kunci: s.kunci,
+          jawabanPeserta: jawaban[s.id] || null,
+        }))
+      )
+    );
     sessionStorage.removeItem('tryout_mulai_ts');
     sessionStorage.removeItem('tryout_jawaban');
     sessionStorage.removeItem('tryout_ragu');
+    sessionStorage.removeItem('tryout_urutan');
 
     router.push('/hasil');
   }
