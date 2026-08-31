@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Breadcrumb from '../components/Breadcrumb';
-import { getSoal } from '../lib/sheety';
+import { getSoal, catatPeserta } from '../lib/sheety';
 import { formatJudulPaket, groupSoalByPaket } from '../lib/paketConfig';
 
 export default function PilihPaket() {
@@ -24,18 +24,17 @@ export default function PilihPaket() {
     getSoal().then((data) => setDaftarPaket(groupSoalByPaket(data)));
   }, []);
 
-  function simpanIdentitas(e) {
+  async function simpanIdentitas(e) {
     e.preventDefault();
     if (!nama.trim() || !noWa.trim()) {
       setError('Nama dan nomor WhatsApp wajib diisi.');
       return;
     }
     setError('');
-    sessionStorage.setItem(
-      'tryout_peserta',
-      JSON.stringify({ nama: nama.trim(), noWa: noWa.trim() })
-    );
+    const peserta = { nama: nama.trim(), noWa: noWa.trim(), waktuMulai: new Date().toISOString() };
+    sessionStorage.setItem('tryout_peserta', JSON.stringify(peserta));
     setIdentitasTersimpan(true);
+    catatPeserta(peserta); // dikirim ke Sheet di belakang layar, tidak menghalangi peserta lanjut
   }
 
   function pilihPaket(kode) {
