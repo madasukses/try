@@ -3,14 +3,14 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Breadcrumb from '../components/Breadcrumb';
 import { getSoal } from '../lib/sheety';
-import { PAKET, DURASI_MENIT } from '../lib/paketConfig';
+import { PAKET_BADGE, formatJudulPaket, groupSoalByPaket } from '../lib/paketConfig';
 
 export default function PilihPaket() {
   const router = useRouter();
   const [nama, setNama] = useState('');
   const [email, setEmail] = useState('');
   const [identitasTersimpan, setIdentitasTersimpan] = useState(false);
-  const [jumlahSoal, setJumlahSoal] = useState(null);
+  const [daftarPaket, setDaftarPaket] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function PilihPaket() {
       setEmail(p.email);
       setIdentitasTersimpan(true);
     }
-    getSoal().then((data) => setJumlahSoal(data.length));
+    getSoal().then((data) => setDaftarPaket(groupSoalByPaket(data)));
   }, []);
 
   function simpanIdentitas(e) {
@@ -38,11 +38,12 @@ export default function PilihPaket() {
     setIdentitasTersimpan(true);
   }
 
-  function pilihPaket() {
+  function pilihPaket(kode) {
     if (!identitasTersimpan) {
       setError('Isi nama dan email terlebih dahulu.');
       return;
     }
+    sessionStorage.setItem('tryout_kode_paket', kode);
     router.push('/persiapan');
   }
 
@@ -111,29 +112,45 @@ export default function PilihPaket() {
 
           <h2 className="text-sm font-semibold text-slate-500 mb-3 tracking-wide">PAKET TERSEDIA</h2>
 
-          <button
-            onClick={pilihPaket}
-            className="w-full text-left bg-white rounded-xl border border-slate-200 shadow-sm hover:border-brand-400 hover:shadow-md transition-all p-5 sm:p-6"
-          >
-            <span className="inline-block text-xs font-bold bg-navy-700 text-white px-2.5 py-1 rounded mb-3">
-              {PAKET.badge}
-            </span>
-            <h3 className="text-lg sm:text-xl font-bold text-navy-900 mb-1">{PAKET.judul}</h3>
-            <p className="text-sm text-slate-500 mb-4">{PAKET.deskripsi}</p>
-            <div className="grid grid-cols-2 gap-3 max-w-sm">
-              <div className="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
-                <p className="text-xs text-slate-500 mb-1">JUMLAH SOAL</p>
-                <p className="text-xl font-bold text-navy-900">{jumlahSoal ?? '…'} soal</p>
-              </div>
-              <div className="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
-                <p className="text-xs text-slate-500 mb-1">DURASI</p>
-                <p className="text-xl font-bold text-navy-900">{DURASI_MENIT} menit</p>
-              </div>
-            </div>
-            {error && identitasTersimpan === false && (
-              <p className="text-alarm-500 text-sm mt-3">{error}</p>
-            )}
-          </button>
+          {daftarPaket === null && (
+            <p className="text-sm text-slate-400">Memuat daftar paket…</p>
+          )}
+
+          {daftarPaket !== null && daftarPaket.length === 0 && (
+            <p className="text-sm text-slate-400">Belum ada soal di Sheet.</p>
+          )}
+
+          <div className="space-y-3">
+            {daftarPaket?.map(({ kode, jumlah }) => (
+              <button
+                key={kode}
+                onClick={() => pilihPaket(kode)}
+                className="w-full text-left bg-white rounded-xl border border-slate-200 shadow-sm hover:border-brand-400 hover:shadow-md transition-all p-5 sm:p-6"
+              >
+                <span className="inline-block text-xs font-bold bg-navy-700 text-white px-2.5 py-1 rounded mb-3">
+                  {PAKET_BADGE}
+                </span>
+                <h3 className="text-lg sm:text-xl font-bold text-navy-900 mb-1">{formatJudulPaket(kode)}</h3>
+                <p className="text-sm text-slate-500 mb-4">
+                  Simulasi ujian Computer Assisted Test — TWK, TIU, dan TKP.
+                </p>
+                <div className="grid grid-cols-2 gap-3 max-w-sm">
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
+                    <p className="text-xs text-slate-500 mb-1">JUMLAH SOAL</p>
+                    <p className="text-xl font-bold text-navy-900">{jumlah} soal</p>
+                  </div>
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
+                    <p className="text-xs text-slate-500 mb-1">DURASI</p>
+                    <p className="text-xl font-bold text-navy-900">30 menit</p>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {error && (
+            <p className="text-alarm-500 text-sm mt-4">{error}</p>
+          )}
         </div>
       </main>
     </>

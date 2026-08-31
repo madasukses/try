@@ -3,27 +3,39 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Breadcrumb from '../components/Breadcrumb';
 import { getSoal } from '../lib/sheety';
-import { PAKET, DURASI_MENIT, PASSING_GRADE, KATEGORI_LABEL } from '../lib/paketConfig';
+import {
+  PAKET_BADGE,
+  DURASI_MENIT,
+  PASSING_GRADE,
+  KATEGORI_LABEL,
+  formatJudulPaket,
+  ambilSoalPaket,
+} from '../lib/paketConfig';
 
 export default function Persiapan() {
   const router = useRouter();
-  const [peserta, setPeserta] = useState(null);
+  const [kodePaket, setKodePaket] = useState(null);
   const [jumlahSoal, setJumlahSoal] = useState(null);
 
   useEffect(() => {
-    const raw = sessionStorage.getItem('tryout_peserta');
-    if (!raw) {
+    const peserta = sessionStorage.getItem('tryout_peserta');
+    const kode = sessionStorage.getItem('tryout_kode_paket');
+    if (!peserta || !kode) {
       router.replace('/');
       return;
     }
-    setPeserta(JSON.parse(raw));
-    getSoal().then((data) => setJumlahSoal(data.length));
+    setKodePaket(kode);
+    getSoal().then((data) => setJumlahSoal(ambilSoalPaket(data, kode).length));
   }, [router]);
+
+  if (!kodePaket) return null;
+
+  const judulPaket = formatJudulPaket(kodePaket);
 
   return (
     <>
       <Head>
-        <title>Persiapan Mengerjakan — {PAKET.judul}</title>
+        <title>Persiapan Mengerjakan — {judulPaket}</title>
       </Head>
       <main className="min-h-screen bg-slate-50 px-4 sm:px-6 py-8">
         <div className="max-w-3xl mx-auto">
@@ -36,7 +48,6 @@ export default function Persiapan() {
           />
           <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 mb-6">Persiapan Mengerjakan</h1>
 
-          {/* Banner penting */}
           <div className="bg-blue-50 border-l-4 border-brand-500 rounded-lg px-5 py-4 mb-6 flex gap-3 items-start">
             <span className="w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
               i
@@ -49,12 +60,11 @@ export default function Persiapan() {
             </div>
           </div>
 
-          {/* Paket info */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6 mb-6">
             <span className="inline-block text-xs font-bold bg-navy-700 text-white px-2.5 py-1 rounded mb-3">
-              {PAKET.badge}
+              {PAKET_BADGE}
             </span>
-            <h2 className="text-lg sm:text-xl font-bold text-navy-900 mb-4">{PAKET.judul}</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-navy-900 mb-4">{judulPaket}</h2>
             <div className="grid grid-cols-2 gap-3 max-w-sm">
               <div className="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
                 <p className="text-xs text-slate-500 mb-1">JUMLAH SOAL</p>
@@ -67,7 +77,6 @@ export default function Persiapan() {
             </div>
           </div>
 
-          {/* Passing grade */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6 mb-6">
             <div className="flex items-center gap-3 mb-4">
               <span className="w-9 h-9 rounded-lg bg-brand-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
@@ -89,7 +98,6 @@ export default function Persiapan() {
             </div>
           </div>
 
-          {/* CTA */}
           <div className="rounded-xl bg-gradient-to-r from-brand-600 to-brand-800 px-5 sm:px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="text-white">
               <p className="text-xs font-bold tracking-wide opacity-90">SIAP MULAI?</p>

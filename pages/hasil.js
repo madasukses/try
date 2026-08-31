@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Breadcrumb from '../components/Breadcrumb';
-import { PAKET } from '../lib/paketConfig';
+import { formatJudulPaket } from '../lib/paketConfig';
 
 export default function Hasil() {
   const router = useRouter();
@@ -31,7 +31,7 @@ export default function Hasil() {
   return (
     <>
       <Head>
-        <title>Hasil — {PAKET.judul}</title>
+        <title>Hasil — {formatJudulPaket(hasil.kodePaket)}</title>
       </Head>
       <main className="min-h-screen bg-slate-50 px-4 sm:px-6 py-8">
         <div className="max-w-md mx-auto">
@@ -47,6 +47,7 @@ export default function Hasil() {
             <div className="bg-gradient-to-r from-brand-600 to-brand-800 px-6 py-5 text-center">
               <p className="text-blue-100 text-xs font-bold tracking-wide">HASIL TRY OUT</p>
               <p className="text-white font-semibold mt-1">{peserta?.nama}</p>
+              <p className="text-blue-100 text-xs mt-0.5">{formatJudulPaket(hasil.kodePaket)}</p>
             </div>
 
             <div className="px-6 py-8 text-center border-b border-slate-100">

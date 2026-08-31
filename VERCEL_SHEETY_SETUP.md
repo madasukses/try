@@ -7,18 +7,22 @@ coding.
 
 ## 1. Siapkan Google Sheet
 
+> **Kalau Sheet sudah ada isinya (misal 50 soal yang sudah pernah diisi):** tinggal tambah 1 kolom baru bernama `kode` di antara kolom `id` dan `kategori`, lalu isi `SOAL1` di semua baris yang sudah ada. Atau paling gampang: import ulang file CSV terbaru yang sudah termasuk kolom `kode` (pilih **"Replace current sheet"** saat import, lihat langkah 1 di bawah).
+
 Buat 1 Google Sheet baru dengan **3 tab**, persis nama dan kolom berikut
 (huruf besar/kecil di baris pertama harus sama):
 
 ### Tab `SOAL`
-| id | kategori | soal | pilihanA | pilihanB | pilihanC | pilihanD | pilihanE | kunci |
-|----|----------|------|----------|----------|----------|----------|----------|-------|
-| 1  | TWK      | Teks soal...| Opsi A | Opsi B | Opsi C | Opsi D | Opsi E | B |
+| id | kode | kategori | soal | pilihanA | pilihanB | pilihanC | pilihanD | pilihanE | kunci |
+|----|------|----------|------|----------|----------|----------|----------|----------|-------|
+| 1  | SOAL1 | TWK      | Teks soal...| Opsi A | Opsi B | Opsi C | Opsi D | Opsi E | B |
 
-- `id`: angka urut unik, wajib ada dan tidak boleh sama antar baris.
+- `id`: angka urut unik, wajib ada dan tidak boleh sama antar baris (boleh lanjut nomor antar paket, seperti di file CSV yang disediakan).
+- `kode`: penanda paket try out, isi **SOAL1**, **SOAL2**, **SOAL3**, dst. Semua soal dengan kode yang sama akan digabung jadi satu paket try out yang bisa dipilih peserta di halaman awal. Boleh campur TWK/TIU/TKP dalam satu kode yang sama.
 - `kategori`: bebas, contoh TWK / TIU / TKP.
 - `kunci`: satu huruf A–E, harus sama persis dengan salah satu kolom pilihan yang berisi jawaban benar.
-- Isi sampai 50 baris soal (atau berapa pun jumlah yang diinginkan — app otomatis menyesuaikan jumlah soal dari Sheet).
+
+Paket baru otomatis muncul di halaman "Pilih Paket" begitu ada baris dengan kode baru — **tidak perlu ubah kode aplikasi sama sekali**, cukup tambah baris di Sheet.
 
 ### Tab `PESERTA`
 | nama | email | waktuMulai |
@@ -27,10 +31,10 @@ Buat 1 Google Sheet baru dengan **3 tab**, persis nama dan kolom berikut
 Kosongkan isinya — akan terisi otomatis tiap ada peserta yang mulai ujian.
 
 ### Tab `HASIL`
-| nama | email | skor | benar | salah | kosong | waktuSelesai | detailJawaban |
-|------|-------|------|-------|-------|--------|--------------|----------------|
+| nama | email | paket | skor | benar | salah | kosong | waktuSelesai | detailJawaban |
+|------|-------|-------|------|-------|-------|--------|--------------|----------------|
 
-Kosongkan juga — terisi otomatis tiap peserta submit ujian.
+Kosongkan juga — terisi otomatis tiap peserta submit ujian. Kolom `paket` mencatat kode paket (SOAL1, SOAL2, dst) yang dikerjakan peserta.
 
 ## 2. Buat project di Sheety
 

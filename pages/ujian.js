@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Breadcrumb from '../components/Breadcrumb';
 import { getSoal, kirimHasil } from '../lib/sheety';
-import { DURASI_DETIK, PAKET } from '../lib/paketConfig';
+import { DURASI_DETIK, formatJudulPaket, ambilSoalPaket } from '../lib/paketConfig';
 
 const PILIHAN = ['A', 'B', 'C', 'D', 'E'];
 
@@ -17,6 +17,7 @@ function formatWaktu(detik) {
 export default function Ujian() {
   const router = useRouter();
   const [peserta, setPeserta] = useState(null);
+  const [kodePaket, setKodePaket] = useState(null);
   const [soal, setSoal] = useState([]);
   const [loading, setLoading] = useState(true);
   const [index, setIndex] = useState(0);
@@ -30,11 +31,13 @@ export default function Ujian() {
 
   useEffect(() => {
     const raw = sessionStorage.getItem('tryout_peserta');
-    if (!raw) {
+    const kode = sessionStorage.getItem('tryout_kode_paket');
+    if (!raw || !kode) {
       router.replace('/');
       return;
     }
     setPeserta(JSON.parse(raw));
+    setKodePaket(kode);
 
     let mulaiTs = sessionStorage.getItem('tryout_mulai_ts');
     if (!mulaiTs) {
@@ -50,7 +53,7 @@ export default function Ujian() {
     if (savedRagu) setRaguRagu(JSON.parse(savedRagu));
 
     getSoal().then((data) => {
-      setSoal(data);
+      setSoal(ambilSoalPaket(data, kode));
       setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,6 +122,7 @@ export default function Ujian() {
     await kirimHasil({
       nama: peserta?.nama,
       email: peserta?.email,
+      paket: kodePaket,
       skor,
       benar,
       salah,
@@ -129,7 +133,7 @@ export default function Ujian() {
 
     sessionStorage.setItem(
       'tryout_hasil',
-      JSON.stringify({ skor, benar, salah, kosong, total: soal.length, otomatis })
+      JSON.stringify({ skor, benar, salah, kosong, total: soal.length, otomatis, kodePaket })
     );
     sessionStorage.removeItem('tryout_mulai_ts');
     sessionStorage.removeItem('tryout_jawaban');
@@ -151,7 +155,7 @@ export default function Ujian() {
   return (
     <>
       <Head>
-        <title>Mengerjakan {PAKET.judul}</title>
+        <title>Mengerjakan {formatJudulPaket(kodePaket)}</title>
       </Head>
       <div className="min-h-screen bg-slate-50 px-4 sm:px-6 py-6">
         <div className="max-w-6xl mx-auto">
@@ -159,10 +163,10 @@ export default function Ujian() {
             items={[
               { label: 'Home', href: '/' },
               { label: 'Persiapan Mengerjakan', href: '/persiapan' },
-              { label: `Mengerjakan ${PAKET.judul}` },
+              { label: `Mengerjakan ${formatJudulPaket(kodePaket)}` },
             ]}
           />
-          <h1 className="text-2xl sm:text-3xl font-bold text-navy-900">{PAKET.judul}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-navy-900">{formatJudulPaket(kodePaket)}</h1>
           <p className="text-sm text-slate-500 mb-5">
             Kerjakan soal dengan jujur dan sungguh-sungguh untuk mengukur kemampuan kamu.
           </p>
