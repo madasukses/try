@@ -4,7 +4,6 @@ import Head from 'next/head';
 import Breadcrumb from '../components/Breadcrumb';
 import { getSoal } from '../lib/sheety';
 import {
-  PAKET_BADGE,
   DURASI_MENIT,
   PASSING_GRADE,
   KATEGORI_LABEL,
@@ -61,9 +60,6 @@ export default function Persiapan() {
           </div>
 
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6 mb-6">
-            <span className="inline-block text-xs font-bold bg-navy-700 text-white px-2.5 py-1 rounded mb-3">
-              {PAKET_BADGE}
-            </span>
             <h2 className="text-lg sm:text-xl font-bold text-navy-900 mb-4">{judulPaket}</h2>
             <div className="grid grid-cols-2 gap-3 max-w-sm">
               <div className="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">

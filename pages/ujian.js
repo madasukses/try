@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Breadcrumb from '../components/Breadcrumb';
 import { getSoal, kirimHasil } from '../lib/sheety';
-import { DURASI_DETIK, formatJudulPaket, ambilSoalPaket, acakSoalStabil } from '../lib/paketConfig';
+import { DURASI_DETIK, formatJudulPaket, ambilSoalPaket, acakSoalStabil, acakPilihanStabil } from '../lib/paketConfig';
 
 const PILIHAN = ['A', 'B', 'C', 'D', 'E'];
 
@@ -54,7 +54,8 @@ export default function Ujian() {
 
     getSoal().then((data) => {
       const soalPaket = ambilSoalPaket(data, kode);
-      setSoal(acakSoalStabil(soalPaket, 'tryout_urutan'));
+      const urutanSoal = acakSoalStabil(soalPaket, 'tryout_urutan');
+      setSoal(acakPilihanStabil(urutanSoal, 'tryout_pilihan_map'));
       setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,6 +103,7 @@ export default function Ujian() {
     sessionStorage.removeItem('tryout_jawaban');
     sessionStorage.removeItem('tryout_ragu');
     sessionStorage.removeItem('tryout_urutan');
+    sessionStorage.removeItem('tryout_pilihan_map');
     router.push('/');
   }
 
@@ -158,6 +160,7 @@ export default function Ujian() {
     sessionStorage.removeItem('tryout_jawaban');
     sessionStorage.removeItem('tryout_ragu');
     sessionStorage.removeItem('tryout_urutan');
+    sessionStorage.removeItem('tryout_pilihan_map');
 
     router.push('/hasil');
   }

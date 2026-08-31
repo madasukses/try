@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Breadcrumb from '../components/Breadcrumb';
 import { getSoal } from '../lib/sheety';
-import { PAKET_BADGE, formatJudulPaket, groupSoalByPaket } from '../lib/paketConfig';
+import { formatJudulPaket, groupSoalByPaket } from '../lib/paketConfig';
 
 export default function PilihPaket() {
   const router = useRouter();
@@ -127,9 +127,6 @@ export default function PilihPaket() {
                 onClick={() => pilihPaket(kode)}
                 className="w-full text-left bg-white rounded-xl border border-slate-200 shadow-sm hover:border-brand-400 hover:shadow-md transition-all p-5 sm:p-6"
               >
-                <span className="inline-block text-xs font-bold bg-navy-700 text-white px-2.5 py-1 rounded mb-3">
-                  {PAKET_BADGE}
-                </span>
                 <h3 className="text-lg sm:text-xl font-bold text-navy-900 mb-1">{formatJudulPaket(kode)}</h3>
                 <p className="text-sm text-slate-500 mb-4">
                   Simulasi ujian Computer Assisted Test — TWK, TIU, dan TKP.

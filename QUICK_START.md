@@ -10,8 +10,8 @@ langsung bisa dicoba dengan 10 soal contoh (TWK/TIU/TKP) — tanpa setup
 apa pun.
 
 ## Sambungkan ke Google Sheet asli
-Lihat `VERCEL_SHEETY_SETUP.md` untuk langkah lengkap bikin Sheet, project
-Sheety, dan isi `.env.local`.
+Lihat `GOOGLE_APPS_SCRIPT_SETUP.md` untuk langkah lengkap deploy Apps Script
+dan isi `.env.local`.
 
 ## Deploy cepat ke Vercel
 ```bash
@@ -20,7 +20,7 @@ vercel
 vercel --prod
 ```
 Jangan lupa tambahkan Environment Variable `NEXT_PUBLIC_SHEETY_BASE_URL` di
-dashboard Vercel (Settings → Environment Variables) begitu Sheety sudah
+dashboard Vercel (Settings → Environment Variables) begitu Apps Script sudah
 siap.
 
 ## Alur halaman
@@ -41,7 +41,7 @@ pages/
 components/
   Breadcrumb.js → navigasi breadcrumb dipakai di semua halaman
 lib/
-  sheety.js        → semua pemanggilan API ke Sheety
+  sheety.js        → semua pemanggilan API ke Google Apps Script
   soalFallback.js  → 10 soal contoh (mode demo)
   paketConfig.js   → judul paket, durasi, passing grade (edit di sini)
 ```
