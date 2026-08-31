@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  padding: 0;
+  margin: 0;
+  background-color: #f5f6f8;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:focus-visible {
+  outline: 2px solid #234868;
+  outline-offset: 2px;
+}
+
+/* number grid button states */
+.nomor-btn {
+  @apply flex items-center justify-center h-10 w-10 rounded text-sm font-medium border transition-colors;
+}
+.nomor-belum {
+  @apply bg-white border-navy-200 text-navy-700 hover:border-navy-400;
+}
+.nomor-dijawab {
+  @apply bg-emeraldx-500 border-emeraldx-500 text-white;
+}
+.nomor-ragu {
+  @apply bg-amberx-500 border-amberx-500 text-white;
+}
+.nomor-aktif {
+  @apply ring-2 ring-offset-2 ring-navy-700;
+}
