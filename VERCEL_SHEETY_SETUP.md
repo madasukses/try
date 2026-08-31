@@ -25,14 +25,14 @@ Buat 1 Google Sheet baru dengan **3 tab**, persis nama dan kolom berikut
 Paket baru otomatis muncul di halaman "Pilih Paket" begitu ada baris dengan kode baru — **tidak perlu ubah kode aplikasi sama sekali**, cukup tambah baris di Sheet.
 
 ### Tab `PESERTA`
-| nama | email | waktuMulai |
-|------|-------|------------|
+| nama | noWa | waktuMulai |
+|------|------|------------|
 
 Kosongkan isinya — akan terisi otomatis tiap ada peserta yang mulai ujian.
 
 ### Tab `HASIL`
-| nama | email | paket | skor | benar | salah | kosong | waktuSelesai | detailJawaban |
-|------|-------|-------|------|-------|-------|--------|--------------|----------------|
+| nama | noWa | paket | skor | benar | salah | kosong | waktuSelesai | detailJawaban |
+|------|------|-------|------|-------|-------|--------|--------------|----------------|
 
 Kosongkan juga — terisi otomatis tiap peserta submit ujian. Kolom `paket` mencatat kode paket (SOAL1, SOAL2, dst) yang dikerjakan peserta.
 

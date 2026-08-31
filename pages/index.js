@@ -8,7 +8,7 @@ import { PAKET_BADGE, formatJudulPaket, groupSoalByPaket } from '../lib/paketCon
 export default function PilihPaket() {
   const router = useRouter();
   const [nama, setNama] = useState('');
-  const [email, setEmail] = useState('');
+  const [noWa, setNoWa] = useState('');
   const [identitasTersimpan, setIdentitasTersimpan] = useState(false);
   const [daftarPaket, setDaftarPaket] = useState(null);
   const [error, setError] = useState('');
@@ -18,7 +18,7 @@ export default function PilihPaket() {
     if (raw) {
       const p = JSON.parse(raw);
       setNama(p.nama);
-      setEmail(p.email);
+      setNoWa(p.noWa);
       setIdentitasTersimpan(true);
     }
     getSoal().then((data) => setDaftarPaket(groupSoalByPaket(data)));
@@ -26,21 +26,21 @@ export default function PilihPaket() {
 
   function simpanIdentitas(e) {
     e.preventDefault();
-    if (!nama.trim() || !email.trim()) {
-      setError('Nama dan email wajib diisi.');
+    if (!nama.trim() || !noWa.trim()) {
+      setError('Nama dan nomor WhatsApp wajib diisi.');
       return;
     }
     setError('');
     sessionStorage.setItem(
       'tryout_peserta',
-      JSON.stringify({ nama: nama.trim(), email: email.trim() })
+      JSON.stringify({ nama: nama.trim(), noWa: noWa.trim() })
     );
     setIdentitasTersimpan(true);
   }
 
   function pilihPaket(kode) {
     if (!identitasTersimpan) {
-      setError('Isi nama dan email terlebih dahulu.');
+      setError('Isi nama dan nomor WhatsApp terlebih dahulu.');
       return;
     }
     sessionStorage.setItem('tryout_kode_paket', kode);
@@ -76,12 +76,12 @@ export default function PilihPaket() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-navy-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-navy-700 mb-1">Nomor WhatsApp</label>
                   <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="nama@email.com"
+                    type="tel"
+                    value={noWa}
+                    onChange={(e) => setNoWa(e.target.value)}
+                    placeholder="Contoh: 081234567890"
                     className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-brand-500"
                   />
                 </div>

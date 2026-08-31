@@ -121,7 +121,7 @@ export default function Ujian() {
 
     await kirimHasil({
       nama: peserta?.nama,
-      email: peserta?.email,
+      noWa: peserta?.noWa,
       paket: kodePaket,
       skor,
       benar,
