@@ -54,6 +54,14 @@ export default function PilihPaket() {
       <main className="min-h-screen bg-slate-50 px-4 sm:px-6 py-8">
         <div className="max-w-3xl mx-auto">
           <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Try Out dan Latihan SKD' }]} />
+
+          {/* Banner — ganti file public/banner.png dengan gambar sendiri, ukuran disarankan 1200x300px */}
+          <img
+            src="/banner.png"
+            alt="Banner"
+            className="w-full rounded-xl mb-6 object-cover"
+          />
+
           <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 mb-6">Try Out dan Latihan SKD</h1>
 
           {!identitasTersimpan && (
