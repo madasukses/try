@@ -1,0 +1,330 @@
+import { useEffect, useMemo, useState } from 'react';
+import Head from 'next/head';
+import { getPeserta, getHasil, getSoal } from '../lib/sheety';
+import { ADMIN_PASSWORD, formatJudulPaket } from '../lib/paketConfig';
+
+export default function Admin() {
+  const [terbuka, setTerbuka] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [errorPw, setErrorPw] = useState('');
+
+  const [loading, setLoading] = useState(false);
+  const [peserta, setPeserta] = useState([]);
+  const [hasil, setHasil] = useState([]);
+  const [soal, setSoal] = useState([]);
+  const [urutBerdasar, setUrutBerdasar] = useState('skor');
+  const [tab, setTab] = useState('hasil'); // 'hasil' | 'soal'
+  const [filterPaket, setFilterPaket] = useState('semua');
+
+  useEffect(() => {
+    if (sessionStorage.getItem('tryout_admin_ok') === '1') {
+      setTerbuka(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (terbuka) muatData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [terbuka]);
+
+  function cekPassword(e) {
+    e.preventDefault();
+    if (passwordInput === ADMIN_PASSWORD) {
+      sessionStorage.setItem('tryout_admin_ok', '1');
+      setTerbuka(true);
+      setErrorPw('');
+    } else {
+      setErrorPw('Password salah.');
+    }
+  }
+
+  async function muatData() {
+    setLoading(true);
+    const [p, h, s] = await Promise.all([getPeserta(), getHasil(), getSoal()]);
+    setPeserta(p);
+    setHasil(h);
+    setSoal(s);
+    setLoading(false);
+  }
+
+  const hasilTerurut = useMemo(() => {
+    const arr = [...hasil];
+    if (urutBerdasar === 'skor') arr.sort((a, b) => (b.skor || 0) - (a.skor || 0));
+    else if (urutBerdasar === 'waktu') arr.sort((a, b) => new Date(b.waktuSelesai) - new Date(a.waktuSelesai));
+    else if (urutBerdasar === 'nama') arr.sort((a, b) => String(a.nama).localeCompare(String(b.nama)));
+    return arr;
+  }, [hasil, urutBerdasar]);
+
+  const daftarKodePaket = useMemo(() => {
+    const set = new Set(soal.map((s) => s.kode || 'SOAL1'));
+    return Array.from(set).sort();
+  }, [soal]);
+
+  const soalTerfilter = useMemo(() => {
+    if (filterPaket === 'semua') return soal;
+    return soal.filter((s) => (s.kode || 'SOAL1') === filterPaket);
+  }, [soal, filterPaket]);
+
+  const rataSkor = hasil.length
+    ? Math.round(hasil.reduce((sum, h) => sum + (Number(h.skor) || 0), 0) / hasil.length)
+    : 0;
+
+  function exportCsv() {
+    const header = ['nama', 'noWa', 'paket', 'skor', 'benar', 'salah', 'kosong', 'waktuSelesai'];
+    const rows = hasilTerurut.map((h) => header.map((k) => `"${String(h[k] ?? '').replace(/"/g, '""')}"`).join(','));
+    const csv = [header.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `hasil-tryout-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  if (!terbuka) {
+    return (
+      <>
+        <Head>
+          <title>Admin — Tryout CPNS</title>
+        </Head>
+        <main className="min-h-screen bg-navy-900 flex items-center justify-center px-4">
+          <form
+            onSubmit={cekPassword}
+            className="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm"
+          >
+            <h1 className="font-bold text-navy-900 mb-1">Admin</h1>
+            <p className="text-sm text-slate-500 mb-4">Masukkan password untuk melihat hasil.</p>
+            <input
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              placeholder="Password"
+              autoFocus
+              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm mb-3 focus:border-brand-500"
+            />
+            {errorPw && <p className="text-alarm-500 text-sm mb-3">{errorPw}</p>}
+            <button
+              type="submit"
+              className="w-full bg-navy-800 hover:bg-navy-900 text-white font-semibold py-2.5 rounded-lg text-sm"
+            >
+              Masuk
+            </button>
+          </form>
+        </main>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Head>
+        <title>Admin — Hasil Tryout</title>
+      </Head>
+      <main className="min-h-screen bg-slate-50 px-4 sm:px-6 py-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <h1 className="text-2xl sm:text-3xl font-bold text-navy-900">Hasil Tryout</h1>
+            <div className="flex gap-2">
+              <button
+                onClick={muatData}
+                disabled={loading}
+                className="px-4 py-2 text-sm font-medium border border-slate-300 rounded-lg text-navy-700 hover:bg-slate-50 disabled:opacity-50"
+              >
+                {loading ? 'Memuat…' : '↻ Refresh'}
+              </button>
+              <button
+                onClick={exportCsv}
+                disabled={hasil.length === 0}
+                className="px-4 py-2 text-sm font-medium bg-brand-600 hover:bg-brand-700 text-white rounded-lg disabled:opacity-50"
+              >
+                ⬇ Export CSV
+              </button>
+            </div>
+          </div>
+
+          {/* Tab */}
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => setTab('hasil')}
+              className={`text-sm font-medium px-4 py-2 rounded-lg border ${
+                tab === 'hasil'
+                  ? 'bg-navy-800 border-navy-800 text-white'
+                  : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              Hasil Peserta
+            </button>
+            <button
+              onClick={() => setTab('soal')}
+              className={`text-sm font-medium px-4 py-2 rounded-lg border ${
+                tab === 'soal'
+                  ? 'bg-navy-800 border-navy-800 text-white'
+                  : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              Bank Soal & Kunci
+            </button>
+          </div>
+
+          {tab === 'hasil' && (
+            <>
+          {/* Ringkasan */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
+              <p className="text-2xl font-bold text-navy-900">{peserta.length}</p>
+              <p className="text-xs text-slate-500 mt-1">Peserta Terdaftar</p>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
+              <p className="text-2xl font-bold text-navy-900">{hasil.length}</p>
+              <p className="text-xs text-slate-500 mt-1">Sudah Submit</p>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
+              <p className="text-2xl font-bold text-navy-900">{rataSkor}</p>
+              <p className="text-xs text-slate-500 mt-1">Rata-rata Skor</p>
+            </div>
+          </div>
+
+          {/* Urutkan */}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm text-slate-500">Urutkan:</span>
+            {[
+              { key: 'skor', label: 'Skor tertinggi' },
+              { key: 'waktu', label: 'Terbaru' },
+              { key: 'nama', label: 'Nama A-Z' },
+            ].map((opt) => (
+              <button
+                key={opt.key}
+                onClick={() => setUrutBerdasar(opt.key)}
+                className={`text-xs font-medium px-3 py-1.5 rounded-lg border ${
+                  urutBerdasar === opt.key
+                    ? 'bg-navy-800 border-navy-800 text-white'
+                    : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Tabel hasil */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 text-left text-xs text-slate-500">
+                  <th className="px-4 py-3 font-medium">#</th>
+                  <th className="px-4 py-3 font-medium">Nama</th>
+                  <th className="px-4 py-3 font-medium">No. WA</th>
+                  <th className="px-4 py-3 font-medium">Paket</th>
+                  <th className="px-4 py-3 font-medium text-right">Skor</th>
+                  <th className="px-4 py-3 font-medium text-right">Benar</th>
+                  <th className="px-4 py-3 font-medium text-right">Salah</th>
+                  <th className="px-4 py-3 font-medium text-right">Kosong</th>
+                  <th className="px-4 py-3 font-medium">Selesai</th>
+                </tr>
+              </thead>
+              <tbody>
+                {hasilTerurut.map((h, i) => (
+                  <tr key={i} className="border-b border-slate-50 last:border-0">
+                    <td className="px-4 py-3 text-slate-400">{i + 1}</td>
+                    <td className="px-4 py-3 font-medium text-navy-900">{h.nama}</td>
+                    <td className="px-4 py-3 text-slate-600">{h.noWa}</td>
+                    <td className="px-4 py-3 text-slate-600">{formatJudulPaket(h.paket)}</td>
+                    <td className="px-4 py-3 text-right font-bold text-navy-900">{h.skor}</td>
+                    <td className="px-4 py-3 text-right text-emeraldx-600">{h.benar}</td>
+                    <td className="px-4 py-3 text-right text-alarm-500">{h.salah}</td>
+                    <td className="px-4 py-3 text-right text-slate-400">{h.kosong}</td>
+                    <td className="px-4 py-3 text-slate-500 text-xs">
+                      {h.waktuSelesai ? new Date(h.waktuSelesai).toLocaleString('id-ID') : '-'}
+                    </td>
+                  </tr>
+                ))}
+                {hasilTerurut.length === 0 && !loading && (
+                  <tr>
+                    <td colSpan={9} className="px-4 py-8 text-center text-slate-400">
+                      Belum ada peserta yang submit hasil.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+            </>
+          )}
+
+          {tab === 'soal' && (
+            <>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-sm text-slate-500">Paket:</span>
+                <button
+                  onClick={() => setFilterPaket('semua')}
+                  className={`text-xs font-medium px-3 py-1.5 rounded-lg border ${
+                    filterPaket === 'semua'
+                      ? 'bg-navy-800 border-navy-800 text-white'
+                      : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  Semua
+                </button>
+                {daftarKodePaket.map((k) => (
+                  <button
+                    key={k}
+                    onClick={() => setFilterPaket(k)}
+                    className={`text-xs font-medium px-3 py-1.5 rounded-lg border ${
+                      filterPaket === k
+                        ? 'bg-navy-800 border-navy-800 text-white'
+                        : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {formatJudulPaket(k)}
+                  </button>
+                ))}
+              </div>
+
+              <div className="space-y-3">
+                {soalTerfilter.map((s, i) => (
+                  <div key={s.id ?? i} className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xs font-bold bg-navy-800 text-white px-2.5 py-1 rounded">
+                        No. {i + 1}
+                      </span>
+                      <span className="text-xs font-medium bg-slate-100 text-navy-600 px-2.5 py-1 rounded">
+                        {s.kategori}
+                      </span>
+                      <span className="text-xs font-medium bg-blue-50 text-brand-700 px-2.5 py-1 rounded">
+                        {formatJudulPaket(s.kode)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-navy-900 mb-2 whitespace-pre-line">{s.soal}</p>
+                    <div className="grid sm:grid-cols-2 gap-1.5">
+                      {['A', 'B', 'C', 'D', 'E'].map((huruf) => {
+                        const teks = s[`pilihan${huruf}`];
+                        if (!teks && teks !== 0) return null;
+                        const benar = huruf === s.kunci;
+                        return (
+                          <div
+                            key={huruf}
+                            className={`flex gap-2 items-center text-sm px-3 py-1.5 rounded-lg ${
+                              benar ? 'bg-emeraldx-50 text-emeraldx-800 font-medium' : 'text-slate-600'
+                            }`}
+                          >
+                            <span className="font-semibold">{huruf}.</span>
+                            <span className="flex-1">{teks}</span>
+                            {benar && <span className="text-xs">✓ Kunci</span>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+                {soalTerfilter.length === 0 && !loading && (
+                  <p className="text-center text-slate-400 py-8">Belum ada soal.</p>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </main>
+    </>
+  );
+}
