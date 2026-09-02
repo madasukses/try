@@ -396,21 +396,21 @@ export default function Admin() {
                   </div>
 
                   <DrawingOverlay resetSignal={`${instanPaket}-${instanIndex}`}>
-                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xs font-bold bg-navy-800 text-white px-2.5 py-1 rounded">
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3 sm:p-4 max-w-xs sm:max-w-sm text-sm">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[10px] font-bold bg-navy-800 text-white px-2 py-0.5 rounded">
                         No. {instanIndex + 1}
                       </span>
-                      <span className="text-xs font-medium bg-slate-100 text-navy-600 px-2.5 py-1 rounded">
+                      <span className="text-[10px] font-medium bg-slate-100 text-navy-600 px-2 py-0.5 rounded">
                         {soalInstanAktif.kategori}
                       </span>
                     </div>
 
-                    <p className="text-navy-900 leading-relaxed mb-6 whitespace-pre-line">
+                    <p className="text-navy-900 leading-snug mb-3 whitespace-pre-line text-sm">
                       {soalInstanAktif.soal}
                     </p>
 
-                    <div className="space-y-2.5">
+                    <div className="space-y-1.5">
                       {['A', 'B', 'C', 'D', 'E'].map((huruf) => {
                         const teks = soalInstanAktif[`pilihan${huruf}`];
                         if (!teks && teks !== 0) return null;
@@ -428,10 +428,10 @@ export default function Admin() {
                             key={huruf}
                             onClick={() => pilihJawabanInstan(huruf)}
                             disabled={Boolean(instanJawaban)}
-                            className={`w-full flex gap-3 items-center border rounded-xl px-4 py-3.5 text-left transition-colors ${kelas}`}
+                            className={`w-full flex gap-2 items-center border rounded-lg px-2.5 py-2 text-left transition-colors ${kelas}`}
                           >
                             <span
-                              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                              className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${
                                 instanJawaban && iniKunci
                                   ? 'bg-emeraldx-500 text-white'
                                   : instanJawaban && dipilih
@@ -441,32 +441,32 @@ export default function Admin() {
                             >
                               {huruf}
                             </span>
-                            <span className="text-sm text-navy-800 flex-1">{teks}</span>
+                            <span className="text-xs text-navy-800 flex-1">{teks}</span>
                             {instanJawaban && iniKunci && (
-                              <span className="text-xs font-semibold text-emeraldx-700">✓ Benar</span>
+                              <span className="text-[10px] font-semibold text-emeraldx-700">✓</span>
                             )}
                             {instanJawaban && dipilih && !iniKunci && (
-                              <span className="text-xs font-semibold text-alarm-600">✗ Salah</span>
+                              <span className="text-[10px] font-semibold text-alarm-600">✗</span>
                             )}
                           </button>
                         );
                       })}
                     </div>
 
-                    <div className="flex items-center justify-between mt-6 pt-5 border-t border-slate-100">
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
                       <button
                         onClick={soalInstanSebelumnya}
                         disabled={instanIndex === 0}
-                        className="px-5 py-2.5 text-sm font-medium text-navy-700 border border-slate-300 rounded-lg disabled:opacity-40"
+                        className="px-3 py-1.5 text-xs font-medium text-navy-700 border border-slate-300 rounded-lg disabled:opacity-40"
                       >
                         ‹ Sebelumnya
                       </button>
                       <button
                         onClick={soalInstanBerikutnya}
                         disabled={instanIndex === soalInstan.length - 1}
-                        className="px-5 py-2.5 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-lg disabled:opacity-40"
+                        className="px-3 py-1.5 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-lg disabled:opacity-40"
                       >
-                        Soal Berikutnya ›
+                        Berikutnya ›
                       </button>
                     </div>
                   </div>
