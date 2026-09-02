@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import { getPeserta, getHasil, getSoal } from '../lib/sheety';
 import { ADMIN_PASSWORD, formatJudulPaket } from '../lib/paketConfig';
+import DrawingCanvas from '../components/DrawingCanvas';
 
 export default function Admin() {
   const [terbuka, setTerbuka] = useState(false);
@@ -197,7 +198,7 @@ export default function Admin() {
                   : 'border-slate-300 text-slate-600 hover:bg-slate-50'
               }`}
             >
-              Mode Instan (Konten)
+              Konten
             </button>
           </div>
 
@@ -402,6 +403,7 @@ export default function Admin() {
                     </span>
                   </div>
 
+                  <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-4 items-stretch">
                   <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6">
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-xs font-bold bg-navy-800 text-white px-2.5 py-1 rounded">
@@ -475,6 +477,9 @@ export default function Admin() {
                         Soal Berikutnya ›
                       </button>
                     </div>
+                  </div>
+
+                  <DrawingCanvas resetSignal={`${instanPaket}-${instanIndex}`} />
                   </div>
                 </div>
               )}
