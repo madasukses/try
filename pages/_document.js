@@ -13,6 +13,11 @@ export default function Document() {
         <meta name="description" content="Sistem Tryout CPNS berbasis Computer Assisted Test (CAT)" />
       </Head>
       <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('tryout_dark')==='1')document.documentElement.classList.add('dark')}catch(e){}`,
+          }}
+        />
         <Main />
         <NextScript />
       </body>

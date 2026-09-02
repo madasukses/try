@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Breadcrumb from '../components/Breadcrumb';
+import ThemeToggle from '../components/ThemeToggle';
 import { YOUTUBE_URL } from '../lib/paketConfig';
 
 const PILIHAN = ['A', 'B', 'C', 'D', 'E'];
@@ -24,7 +25,7 @@ export default function Pembahasan() {
 
   if (!daftar) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-navy-900 flex items-center justify-center">
         <p className="text-slate-400 font-mono text-sm">Memuat pembahasan…</p>
       </div>
     );
@@ -35,18 +36,21 @@ export default function Pembahasan() {
       <Head>
         <title>Pembahasan Jawaban</title>
       </Head>
-      <main className="min-h-screen bg-slate-50 px-4 sm:px-6 py-8">
+      <main className="min-h-screen bg-slate-50 dark:bg-navy-900 px-4 sm:px-6 py-8">
         <div className="max-w-2xl mx-auto">
-          <Breadcrumb
-            items={[
-              { label: 'Home', href: '/' },
-              { label: 'Hasil', href: '/hasil' },
-              { label: 'Pembahasan' },
-            ]}
-          />
-          <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 mb-1">Pembahasan Jawaban</h1>
-          <p className="text-sm text-slate-500 mb-6">
-            Skor kamu: <span className="font-semibold text-navy-800">{hasil?.skor}</span> — {hasil?.benar} benar,{' '}
+          <div className="flex items-center justify-between mb-3">
+            <Breadcrumb
+              items={[
+                { label: 'Home', href: '/' },
+                { label: 'Hasil', href: '/hasil' },
+                { label: 'Pembahasan' },
+              ]}
+            />
+            <ThemeToggle />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 dark:text-slate-100 mb-1">Pembahasan Jawaban</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+            Skor kamu: <span className="font-semibold text-navy-800 dark:text-slate-200">{hasil?.skor}</span> — {hasil?.benar} benar,{' '}
             {hasil?.salah} salah, {hasil?.kosong} kosong dari {hasil?.total} soal.
           </p>
 
@@ -71,30 +75,30 @@ export default function Pembahasan() {
               const dijawab = s.jawabanPeserta;
               const benar = dijawab === s.kunci;
               return (
-                <div key={s.id} className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+                <div key={s.id} className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm p-5">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xs font-bold bg-navy-800 text-white px-2.5 py-1 rounded">
+                    <span className="text-xs font-bold bg-navy-800 dark:bg-navy-600 text-white px-2.5 py-1 rounded">
                       No. {i + 1}
                     </span>
-                    <span className="text-xs font-medium bg-slate-100 text-navy-600 px-2.5 py-1 rounded">
+                    <span className="text-xs font-medium bg-slate-100 dark:bg-navy-700 text-navy-600 dark:text-slate-300 px-2.5 py-1 rounded">
                       {s.kategori}
                     </span>
                     {dijawab === null ? (
-                      <span className="text-xs font-medium bg-slate-100 text-slate-500 px-2.5 py-1 rounded ml-auto">
+                      <span className="text-xs font-medium bg-slate-100 dark:bg-navy-700 text-slate-500 dark:text-slate-400 px-2.5 py-1 rounded ml-auto">
                         Tidak dijawab
                       </span>
                     ) : benar ? (
-                      <span className="text-xs font-medium bg-emeraldx-50 text-emeraldx-700 px-2.5 py-1 rounded ml-auto">
+                      <span className="text-xs font-medium bg-emeraldx-50 dark:bg-navy-700 text-emeraldx-700 dark:text-emeraldx-500 px-2.5 py-1 rounded ml-auto">
                         ✓ Benar
                       </span>
                     ) : (
-                      <span className="text-xs font-medium bg-alarm-50 text-alarm-600 px-2.5 py-1 rounded ml-auto">
+                      <span className="text-xs font-medium bg-alarm-50 dark:bg-navy-700 text-alarm-600 dark:text-alarm-400 px-2.5 py-1 rounded ml-auto">
                         ✗ Salah
                       </span>
                     )}
                   </div>
 
-                  <p className="text-sm text-navy-900 mb-3 whitespace-pre-line">{s.soal}</p>
+                  <p className="text-sm text-navy-900 dark:text-slate-100 mb-3 whitespace-pre-line">{s.soal}</p>
 
                   <div className="space-y-1.5">
                     {PILIHAN.map((huruf) => {
@@ -103,9 +107,9 @@ export default function Pembahasan() {
                       const iniKunci = huruf === s.kunci;
                       const iniDijawab = huruf === dijawab;
 
-                      let kelas = 'border-slate-200 text-slate-600';
-                      if (iniKunci) kelas = 'border-emeraldx-500 bg-emeraldx-50 text-emeraldx-800';
-                      else if (iniDijawab && !iniKunci) kelas = 'border-alarm-500 bg-alarm-50 text-alarm-700';
+                      let kelas = 'border-slate-200 dark:border-navy-600 text-slate-600 dark:text-slate-300';
+                      if (iniKunci) kelas = 'border-emeraldx-500 bg-emeraldx-50 dark:bg-navy-700 text-emeraldx-800 dark:text-emeraldx-400';
+                      else if (iniDijawab && !iniKunci) kelas = 'border-alarm-500 bg-alarm-50 dark:bg-navy-700 text-alarm-700 dark:text-alarm-400';
 
                       return (
                         <div key={huruf} className={`flex gap-2.5 items-center border rounded-lg px-3 py-2 text-sm ${kelas}`}>

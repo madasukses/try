@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { getPeserta, getHasil, getSoal } from '../lib/sheety';
 import { ADMIN_PASSWORD, formatJudulPaket } from '../lib/paketConfig';
 import DrawingOverlay from '../components/DrawingOverlay';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Admin() {
   const [terbuka, setTerbuka] = useState(false);
@@ -139,15 +140,16 @@ export default function Admin() {
       <Head>
         <title>Admin — Belajar Bareng Mada</title>
       </Head>
-      <main className="min-h-screen bg-slate-50 px-4 sm:px-6 py-8">
+      <main className="min-h-screen bg-slate-50 dark:bg-navy-900 px-4 sm:px-6 py-8">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-            <h1 className="text-2xl sm:text-3xl font-bold text-navy-900">Belajar Bareng Mada</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 dark:text-slate-100">Belajar Bareng Mada</h1>
             <div className="flex gap-2">
+              <ThemeToggle />
               <button
                 onClick={muatData}
                 disabled={loading}
-                className="px-4 py-2 text-sm font-medium border border-slate-300 rounded-lg text-navy-700 hover:bg-slate-50 disabled:opacity-50"
+                className="px-4 py-2 text-sm font-medium border border-slate-300 dark:border-navy-600 rounded-lg text-navy-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-navy-800 disabled:opacity-50"
               >
                 {loading ? 'Memuat…' : '↻ Refresh'}
               </button>
@@ -167,7 +169,7 @@ export default function Admin() {
               className={`text-sm font-medium px-4 py-2 rounded-lg border ${
                 tab === 'hasil'
                   ? 'bg-navy-800 border-navy-800 text-white'
-                  : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                  : 'border-slate-300 dark:border-navy-600 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-navy-800'
               }`}
             >
               Hasil Peserta
@@ -177,7 +179,7 @@ export default function Admin() {
               className={`text-sm font-medium px-4 py-2 rounded-lg border ${
                 tab === 'soal'
                   ? 'bg-navy-800 border-navy-800 text-white'
-                  : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                  : 'border-slate-300 dark:border-navy-600 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-navy-800'
               }`}
             >
               Bank Soal & Kunci
@@ -187,7 +189,7 @@ export default function Admin() {
               className={`text-sm font-medium px-4 py-2 rounded-lg border ${
                 tab === 'instan'
                   ? 'bg-navy-800 border-navy-800 text-white'
-                  : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                  : 'border-slate-300 dark:border-navy-600 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-navy-800'
               }`}
             >
               Konten
@@ -198,23 +200,23 @@ export default function Admin() {
             <>
           {/* Ringkasan */}
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
-              <p className="text-2xl font-bold text-navy-900">{peserta.length}</p>
-              <p className="text-xs text-slate-500 mt-1">Peserta Terdaftar</p>
+            <div className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm p-4 text-center">
+              <p className="text-2xl font-bold text-navy-900 dark:text-slate-100">{peserta.length}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Peserta Terdaftar</p>
             </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
-              <p className="text-2xl font-bold text-navy-900">{hasil.length}</p>
-              <p className="text-xs text-slate-500 mt-1">Sudah Submit</p>
+            <div className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm p-4 text-center">
+              <p className="text-2xl font-bold text-navy-900 dark:text-slate-100">{hasil.length}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Sudah Submit</p>
             </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
-              <p className="text-2xl font-bold text-navy-900">{rataSkor}</p>
-              <p className="text-xs text-slate-500 mt-1">Rata-rata Skor</p>
+            <div className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm p-4 text-center">
+              <p className="text-2xl font-bold text-navy-900 dark:text-slate-100">{rataSkor}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Rata-rata Skor</p>
             </div>
           </div>
 
           {/* Urutkan */}
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-sm text-slate-500">Urutkan:</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400">Urutkan:</span>
             {[
               { key: 'skor', label: 'Skor tertinggi' },
               { key: 'waktu', label: 'Terbaru' },
@@ -226,7 +228,7 @@ export default function Admin() {
                 className={`text-xs font-medium px-3 py-1.5 rounded-lg border ${
                   urutBerdasar === opt.key
                     ? 'bg-navy-800 border-navy-800 text-white'
-                    : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                    : 'border-slate-300 dark:border-navy-600 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-navy-800'
                 }`}
               >
                 {opt.label}
@@ -235,10 +237,10 @@ export default function Admin() {
           </div>
 
           {/* Tabel hasil */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+          <div className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-xs text-slate-500">
+                <tr className="border-b border-slate-100 dark:border-navy-700 text-left text-xs text-slate-500 dark:text-slate-400">
                   <th className="px-4 py-3 font-medium">#</th>
                   <th className="px-4 py-3 font-medium">Nama</th>
                   <th className="px-4 py-3 font-medium">No. WA</th>
@@ -252,16 +254,16 @@ export default function Admin() {
               </thead>
               <tbody>
                 {hasilTerurut.map((h, i) => (
-                  <tr key={i} className="border-b border-slate-50 last:border-0">
+                  <tr key={i} className="border-b border-slate-50 dark:border-navy-700 last:border-0">
                     <td className="px-4 py-3 text-slate-400">{i + 1}</td>
-                    <td className="px-4 py-3 font-medium text-navy-900">{h.nama}</td>
-                    <td className="px-4 py-3 text-slate-600">{h.noWa}</td>
-                    <td className="px-4 py-3 text-slate-600">{formatJudulPaket(h.paket)}</td>
-                    <td className="px-4 py-3 text-right font-bold text-navy-900">{h.skor}</td>
-                    <td className="px-4 py-3 text-right text-emeraldx-600">{h.benar}</td>
+                    <td className="px-4 py-3 font-medium text-navy-900 dark:text-slate-100">{h.nama}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{h.noWa}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{formatJudulPaket(h.paket)}</td>
+                    <td className="px-4 py-3 text-right font-bold text-navy-900 dark:text-slate-100">{h.skor}</td>
+                    <td className="px-4 py-3 text-right text-emeraldx-600 dark:text-emeraldx-500">{h.benar}</td>
                     <td className="px-4 py-3 text-right text-alarm-500">{h.salah}</td>
                     <td className="px-4 py-3 text-right text-slate-400">{h.kosong}</td>
-                    <td className="px-4 py-3 text-slate-500 text-xs">
+                    <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-xs">
                       {h.waktuSelesai ? new Date(h.waktuSelesai).toLocaleString('id-ID') : '-'}
                     </td>
                   </tr>
@@ -282,13 +284,13 @@ export default function Admin() {
           {tab === 'soal' && (
             <>
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-sm text-slate-500">Paket:</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">Paket:</span>
                 <button
                   onClick={() => setFilterPaket('semua')}
                   className={`text-xs font-medium px-3 py-1.5 rounded-lg border ${
                     filterPaket === 'semua'
                       ? 'bg-navy-800 border-navy-800 text-white'
-                      : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                      : 'border-slate-300 dark:border-navy-600 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-navy-800'
                   }`}
                 >
                   Semua
@@ -300,7 +302,7 @@ export default function Admin() {
                     className={`text-xs font-medium px-3 py-1.5 rounded-lg border ${
                       filterPaket === k
                         ? 'bg-navy-800 border-navy-800 text-white'
-                        : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                        : 'border-slate-300 dark:border-navy-600 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-navy-800'
                     }`}
                   >
                     {formatJudulPaket(k)}
@@ -310,19 +312,19 @@ export default function Admin() {
 
               <div className="space-y-3">
                 {soalTerfilter.map((s, i) => (
-                  <div key={s.id ?? i} className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                  <div key={s.id ?? i} className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm p-4">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xs font-bold bg-navy-800 text-white px-2.5 py-1 rounded">
                         No. {i + 1}
                       </span>
-                      <span className="text-xs font-medium bg-slate-100 text-navy-600 px-2.5 py-1 rounded">
+                      <span className="text-xs font-medium bg-slate-100 dark:bg-navy-700 text-navy-600 dark:text-slate-300 px-2.5 py-1 rounded">
                         {s.kategori}
                       </span>
-                      <span className="text-xs font-medium bg-blue-50 text-brand-700 px-2.5 py-1 rounded">
+                      <span className="text-xs font-medium bg-blue-50 dark:bg-navy-700 text-brand-700 dark:text-brand-400 px-2.5 py-1 rounded">
                         {formatJudulPaket(s.kode)}
                       </span>
                     </div>
-                    <p className="text-sm text-navy-900 mb-2 whitespace-pre-line">{s.soal}</p>
+                    <p className="text-sm text-navy-900 dark:text-slate-100 mb-2 whitespace-pre-line">{s.soal}</p>
                     <div className="grid sm:grid-cols-2 gap-1.5">
                       {['A', 'B', 'C', 'D', 'E'].map((huruf) => {
                         const teks = s[`pilihan${huruf}`];
@@ -332,7 +334,7 @@ export default function Admin() {
                           <div
                             key={huruf}
                             className={`flex gap-2 items-center text-sm px-3 py-1.5 rounded-lg ${
-                              benar ? 'bg-emeraldx-50 text-emeraldx-800 font-medium' : 'text-slate-600'
+                              benar ? 'bg-emeraldx-50 dark:bg-navy-700 text-emeraldx-800 dark:text-emeraldx-400 font-medium' : 'text-slate-600 dark:text-slate-300'
                             }`}
                           >
                             <span className="font-semibold">{huruf}.</span>
@@ -354,8 +356,8 @@ export default function Admin() {
           {tab === 'instan' && (
             <>
               {!instanPaket && (
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                  <h2 className="font-semibold text-navy-900 mb-1">Pilih paket dulu</h2>
+                <div className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm p-6">
+                  <h2 className="font-semibold text-navy-900 dark:text-slate-100 mb-1">Pilih paket dulu</h2>
                   <p className="text-sm text-slate-500 mb-4">
                     Soal akan muncul satu-satu. Begitu jawaban diklik, langsung kelihatan benar/salahnya —
                     cocok buat rekam konten sambil menjelaskan.
@@ -396,20 +398,21 @@ export default function Admin() {
                   </div>
 
                   <DrawingOverlay resetSignal={`${instanPaket}-${instanIndex}`}>
-                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3 sm:p-4 max-w-xs sm:max-w-sm text-sm">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-[10px] font-bold bg-navy-800 text-white px-2 py-0.5 rounded">
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-xs font-bold bg-navy-800 text-white px-2.5 py-1 rounded">
                         No. {instanIndex + 1}
                       </span>
-                      <span className="text-[10px] font-medium bg-slate-100 text-navy-600 px-2 py-0.5 rounded">
+                      <span className="text-xs font-medium bg-slate-100 text-navy-600 px-2.5 py-1 rounded">
                         {soalInstanAktif.kategori}
                       </span>
                     </div>
 
-                    <p className="text-navy-900 leading-snug mb-3 whitespace-pre-line text-sm">
+                    <p className="text-navy-900 leading-relaxed mb-4 whitespace-pre-line">
                       {soalInstanAktif.soal}
                     </p>
 
+                    <div className="max-w-xs sm:max-w-sm">
                     <div className="space-y-1.5">
                       {['A', 'B', 'C', 'D', 'E'].map((huruf) => {
                         const teks = soalInstanAktif[`pilihan${huruf}`];
@@ -468,6 +471,7 @@ export default function Admin() {
                       >
                         Berikutnya ›
                       </button>
+                    </div>
                     </div>
                   </div>
 

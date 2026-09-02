@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Breadcrumb from '../components/Breadcrumb';
+import ThemeToggle from '../components/ThemeToggle';
 import { getSoal, kirimHasil } from '../lib/sheety';
 import { DURASI_DETIK, formatJudulPaket, ambilSoalPaket, acakSoalStabil, acakPilihanStabil } from '../lib/paketConfig';
 
@@ -167,7 +168,7 @@ export default function Ujian() {
 
   if (loading || !soalAktif) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-navy-900 flex items-center justify-center">
         <p className="text-slate-400 font-mono text-sm">Memuat soal…</p>
       </div>
     );
@@ -180,29 +181,32 @@ export default function Ujian() {
       <Head>
         <title>Mengerjakan {formatJudulPaket(kodePaket)}</title>
       </Head>
-      <div className="min-h-screen bg-slate-50 px-4 sm:px-6 py-6">
+      <div className="min-h-screen bg-slate-50 dark:bg-navy-900 px-4 sm:px-6 py-6">
         <div className="max-w-6xl mx-auto">
-          <Breadcrumb
-            items={[
-              { label: 'Home', href: '/' },
-              { label: 'Persiapan Mengerjakan', href: '/persiapan' },
-              { label: `Mengerjakan ${formatJudulPaket(kodePaket)}` },
-            ]}
-          />
-          <h1 className="text-2xl sm:text-3xl font-bold text-navy-900">{formatJudulPaket(kodePaket)}</h1>
-          <p className="text-sm text-slate-500 mb-5">
+          <div className="flex items-center justify-between mb-1">
+            <Breadcrumb
+              items={[
+                { label: 'Home', href: '/' },
+                { label: 'Persiapan Mengerjakan', href: '/persiapan' },
+                { label: `Mengerjakan ${formatJudulPaket(kodePaket)}` },
+              ]}
+            />
+            <ThemeToggle className="mb-3" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 dark:text-slate-100">{formatJudulPaket(kodePaket)}</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-5">
             Kerjakan soal dengan jujur dan sungguh-sungguh untuk mengukur kemampuan kamu.
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4">
             {/* Panel soal */}
-            <section className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6">
+            <section className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm p-5 sm:p-6">
               <div className="flex items-center justify-between flex-wrap gap-2 mb-5">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold bg-navy-800 text-white px-2.5 py-1 rounded">
+                  <span className="text-xs font-bold bg-navy-800 dark:bg-navy-600 text-white px-2.5 py-1 rounded">
                     No. {index + 1}
                   </span>
-                  <span className="text-xs font-medium bg-slate-100 text-navy-600 px-2.5 py-1 rounded">
+                  <span className="text-xs font-medium bg-slate-100 dark:bg-navy-700 text-navy-600 dark:text-slate-300 px-2.5 py-1 rounded">
                     {soalAktif.kategori}
                   </span>
                 </div>
@@ -212,18 +216,18 @@ export default function Ujian() {
                     className={`text-xs font-medium px-3 py-1.5 rounded-lg border ${
                       raguRagu[soalAktif.id]
                         ? 'bg-amberx-500 border-amberx-500 text-white'
-                        : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                        : 'border-slate-300 dark:border-navy-600 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-navy-700'
                     }`}
                   >
                     ⚑ Ragu-ragu
                   </button>
-                  <button className="text-xs font-medium px-3 py-1.5 rounded-lg border border-alarm-500 text-alarm-500 hover:bg-alarm-50">
+                  <button className="text-xs font-medium px-3 py-1.5 rounded-lg border border-alarm-500 text-alarm-500 hover:bg-alarm-50 dark:hover:bg-navy-700">
                     ⚠ Laporkan
                   </button>
                 </div>
               </div>
 
-              <p className="text-navy-900 leading-relaxed mb-6 whitespace-pre-line">{soalAktif.soal}</p>
+              <p className="text-navy-900 dark:text-slate-100 leading-relaxed mb-6 whitespace-pre-line">{soalAktif.soal}</p>
 
               <div className="space-y-3">
                 {PILIHAN.map((huruf) => {
@@ -235,8 +239,8 @@ export default function Ujian() {
                       key={huruf}
                       className={`flex gap-3 items-center border rounded-xl px-4 py-3.5 cursor-pointer transition-colors ${
                         dipilih
-                          ? 'border-brand-500 bg-brand-50'
-                          : 'border-slate-200 bg-slate-50 hover:border-brand-300'
+                          ? 'border-brand-500 bg-brand-50 dark:bg-navy-700'
+                          : 'border-slate-200 dark:border-navy-600 bg-slate-50 dark:bg-navy-900 hover:border-brand-300'
                       }`}
                     >
                       <input
@@ -248,22 +252,22 @@ export default function Ujian() {
                       />
                       <span
                         className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                          dipilih ? 'bg-brand-600 text-white' : 'bg-slate-200 text-navy-600'
+                          dipilih ? 'bg-brand-600 text-white' : 'bg-slate-200 dark:bg-navy-600 text-navy-600 dark:text-slate-200'
                         }`}
                       >
                         {huruf}
                       </span>
-                      <span className="text-sm text-navy-800">{teks}</span>
+                      <span className="text-sm text-navy-800 dark:text-slate-200">{teks}</span>
                     </label>
                   );
                 })}
               </div>
 
-              <div className="flex items-center justify-between mt-6 pt-5 border-t border-slate-100">
+              <div className="flex items-center justify-between mt-6 pt-5 border-t border-slate-100 dark:border-navy-700">
                 <button
                   onClick={() => setIndex((i) => Math.max(i - 1, 0))}
                   disabled={index === 0}
-                  className="px-5 py-2.5 text-sm font-medium text-brand-600 bg-brand-50 rounded-lg disabled:opacity-40"
+                  className="px-5 py-2.5 text-sm font-medium text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-navy-700 rounded-lg disabled:opacity-40"
                 >
                   ‹ Sebelumnya
                 </button>
@@ -279,18 +283,18 @@ export default function Ujian() {
 
             {/* Sidebar */}
             <aside className="space-y-4 h-fit lg:sticky lg:top-6">
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-center">
+              <div className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm p-4 text-center">
                 <p
                   className={`font-mono text-2xl font-bold ${
-                    waktuKritis ? 'text-alarm-500' : 'text-navy-900'
+                    waktuKritis ? 'text-alarm-500' : 'text-navy-900 dark:text-slate-100'
                   }`}
                 >
                   {formatWaktu(sisaWaktu)}
                 </p>
               </div>
 
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                <h3 className="text-sm font-semibold text-navy-800 mb-3 text-center">Sudah Selesai?</h3>
+              <div className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm p-4">
+                <h3 className="text-sm font-semibold text-navy-800 dark:text-slate-200 mb-3 text-center">Sudah Selesai?</h3>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setShowBatal(true)}
@@ -307,9 +311,9 @@ export default function Ujian() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                <h3 className="text-sm font-semibold text-navy-800 mb-3">Nomor Soal</h3>
-                <div className="flex gap-3 mb-3 text-[11px] text-slate-500">
+              <div className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm p-4">
+                <h3 className="text-sm font-semibold text-navy-800 dark:text-slate-200 mb-3">Nomor Soal</h3>
+                <div className="flex gap-3 mb-3 text-[11px] text-slate-500 dark:text-slate-400">
                   <span className="flex items-center gap-1">
                     <span className="w-2.5 h-2.5 rounded bg-brand-600 inline-block" /> Dijawab
                   </span>
@@ -317,7 +321,7 @@ export default function Ujian() {
                     <span className="w-2.5 h-2.5 rounded bg-amberx-500 inline-block" /> Ragu
                   </span>
                   <span className="flex items-center gap-1">
-                    <span className="w-2.5 h-2.5 rounded border border-slate-300 inline-block" /> Kosong
+                    <span className="w-2.5 h-2.5 rounded border border-slate-300 dark:border-navy-600 inline-block" /> Kosong
                   </span>
                 </div>
                 <div className="grid grid-cols-5 gap-2 max-h-80 overflow-y-auto pr-1">
@@ -340,8 +344,8 @@ export default function Ujian() {
                     );
                   })}
                 </div>
-                <p className="text-xs text-slate-500 mt-3">
-                  Terjawab: <span className="font-semibold text-navy-800">{totalDijawab}</span> / {soal.length}
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                  Terjawab: <span className="font-semibold text-navy-800 dark:text-slate-200">{totalDijawab}</span> / {soal.length}
                 </p>
               </div>
             </aside>
@@ -351,16 +355,16 @@ export default function Ujian() {
 
       {showKonfirmasi && (
         <div className="fixed inset-0 bg-navy-900/50 flex items-center justify-center px-4 z-20">
-          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6">
-            <h3 className="font-semibold text-navy-900 mb-2">Selesaikan ujian sekarang?</h3>
-            <p className="text-sm text-slate-500 mb-4">
+          <div className="bg-white dark:bg-navy-800 rounded-xl shadow-xl max-w-sm w-full p-6">
+            <h3 className="font-semibold text-navy-900 dark:text-slate-100 mb-2">Selesaikan ujian sekarang?</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
               Anda telah menjawab <span className="font-semibold">{totalDijawab}</span> dari{' '}
               {soal.length} soal. Jawaban tidak dapat diubah setelah ujian diselesaikan.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowKonfirmasi(false)}
-                className="flex-1 border border-slate-300 text-navy-700 py-2 rounded-lg text-sm font-medium"
+                className="flex-1 border border-slate-300 dark:border-navy-600 text-navy-700 dark:text-slate-300 py-2 rounded-lg text-sm font-medium"
               >
                 Kembali
               </button>
@@ -378,15 +382,15 @@ export default function Ujian() {
 
       {showBatal && (
         <div className="fixed inset-0 bg-navy-900/50 flex items-center justify-center px-4 z-20">
-          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6">
-            <h3 className="font-semibold text-navy-900 mb-2">Batalkan try out ini?</h3>
-            <p className="text-sm text-slate-500 mb-4">
+          <div className="bg-white dark:bg-navy-800 rounded-xl shadow-xl max-w-sm w-full p-6">
+            <h3 className="font-semibold text-navy-900 dark:text-slate-100 mb-2">Batalkan try out ini?</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
               Semua jawaban yang sudah diisi tidak akan disimpan. Anda akan kembali ke halaman awal.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowBatal(false)}
-                className="flex-1 border border-slate-300 text-navy-700 py-2 rounded-lg text-sm font-medium"
+                className="flex-1 border border-slate-300 dark:border-navy-600 text-navy-700 dark:text-slate-300 py-2 rounded-lg text-sm font-medium"
               >
                 Lanjutkan Ujian
               </button>

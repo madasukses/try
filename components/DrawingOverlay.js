@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 
 const WARNA_PRESET = ['#000000', '#dc2626', '#2563eb', '#16a34a', '#f59e0b'];
+const WARNA_STABILO = [
+  { key: 'kuning', label: 'Kuning', nilai: '#fde047' },
+  { key: 'ijo', label: 'Ijo', nilai: '#4ade80' },
+];
 const UKURAN = [
   { key: 'tipis', label: 'Tipis', nilai: 2 },
   { key: 'normal', label: 'Normal', nilai: 5 },
@@ -19,8 +23,9 @@ export default function DrawingOverlay({ resetSignal, children }) {
   const undoStack = useRef([]);
   const redoStack = useRef([]);
 
-  const [tool, setTool] = useState('pensil'); // 'pensil' | 'hapus'
+  const [tool, setTool] = useState('pensil'); // 'pensil' | 'stabilo' | 'hapus'
   const [warna, setWarna] = useState('#000000');
+  const [warnaStabilo, setWarnaStabilo] = useState('#fde047');
   const [ukuranKey, setUkuranKey] = useState('normal');
   const ketebalan = UKURAN.find((u) => u.key === ukuranKey).nilai;
   const [canUndo, setCanUndo] = useState(false);
@@ -105,9 +110,16 @@ export default function DrawingOverlay({ resetSignal, children }) {
     const ctx = canvasRef.current.getContext('2d');
     if (tool === 'hapus') {
       ctx.globalCompositeOperation = 'destination-out';
+      ctx.globalAlpha = 1;
       ctx.lineWidth = ketebalan * 4;
+    } else if (tool === 'stabilo') {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 0.4;
+      ctx.strokeStyle = warnaStabilo;
+      ctx.lineWidth = ketebalan * 3.5;
     } else {
       ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 1;
       ctx.strokeStyle = warna;
       ctx.lineWidth = ketebalan;
     }
@@ -117,6 +129,7 @@ export default function DrawingOverlay({ resetSignal, children }) {
     ctx.moveTo(dariX, dariY);
     ctx.lineTo(keX, keY);
     ctx.stroke();
+    ctx.globalAlpha = 1;
   }
 
   function handlePointerDown(e) {
@@ -194,6 +207,16 @@ export default function DrawingOverlay({ resetSignal, children }) {
           ✏️ Pensil
         </button>
         <button
+          onClick={() => setTool('stabilo')}
+          className={`text-xs font-medium px-3 py-1.5 rounded-lg border ${
+            tool === 'stabilo'
+              ? 'bg-navy-800 border-navy-800 text-white'
+              : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          🖍️ Stabilo
+        </button>
+        <button
           onClick={() => setTool('hapus')}
           className={`text-xs font-medium px-3 py-1.5 rounded-lg border ${
             tool === 'hapus'
@@ -204,31 +227,47 @@ export default function DrawingOverlay({ resetSignal, children }) {
           🧽 Hapus
         </button>
 
-        <div className="flex items-center gap-1 ml-1">
-          {WARNA_PRESET.map((w) => (
-            <button
-              key={w}
-              onClick={() => {
-                setWarna(w);
+        {tool === 'stabilo' ? (
+          <div className="flex items-center gap-1 ml-1">
+            {WARNA_STABILO.map((w) => (
+              <button
+                key={w.key}
+                onClick={() => setWarnaStabilo(w.nilai)}
+                className={`w-6 h-6 rounded-full border-2 ${
+                  warnaStabilo === w.nilai ? 'border-navy-800' : 'border-white'
+                }`}
+                style={{ backgroundColor: w.nilai, boxShadow: '0 0 0 1px #e2e8f0' }}
+                title={w.label}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-center gap-1 ml-1">
+            {WARNA_PRESET.map((w) => (
+              <button
+                key={w}
+                onClick={() => {
+                  setWarna(w);
+                  setTool('pensil');
+                }}
+                className={`w-6 h-6 rounded-full border-2 ${
+                  warna === w && tool === 'pensil' ? 'border-navy-800' : 'border-white'
+                }`}
+                style={{ backgroundColor: w, boxShadow: '0 0 0 1px #e2e8f0' }}
+              />
+            ))}
+            <input
+              type="color"
+              value={warna}
+              onChange={(e) => {
+                setWarna(e.target.value);
                 setTool('pensil');
               }}
-              className={`w-6 h-6 rounded-full border-2 ${
-                warna === w && tool === 'pensil' ? 'border-navy-800' : 'border-white'
-              }`}
-              style={{ backgroundColor: w, boxShadow: '0 0 0 1px #e2e8f0' }}
+              className="w-6 h-6 rounded-full border-0 cursor-pointer"
+              title="Warna custom"
             />
-          ))}
-          <input
-            type="color"
-            value={warna}
-            onChange={(e) => {
-              setWarna(e.target.value);
-              setTool('pensil');
-            }}
-            className="w-6 h-6 rounded-full border-0 cursor-pointer"
-            title="Warna custom"
-          />
-        </div>
+          </div>
+        )}
 
         <div className="flex items-center gap-1 ml-1">
           {UKURAN.map((u) => (
@@ -279,7 +318,7 @@ export default function DrawingOverlay({ resetSignal, children }) {
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerLeave}
         className="fixed inset-0 touch-none z-40"
-        style={{ cursor: 'crosshair' }}
+        style={{ cursor: 'crosshair', mixBlendMode: 'multiply' }}
       />
     </div>
   );

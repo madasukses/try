@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Link from 'next/link';
 import Breadcrumb from '../components/Breadcrumb';
+import ThemeToggle from '../components/ThemeToggle';
 import { getSoal, catatPeserta } from '../lib/sheety';
 import { formatJudulPaket, groupSoalByPaket } from '../lib/paketConfig';
 
@@ -30,6 +32,14 @@ export default function PilihPaket() {
       setError('Nama dan nomor WhatsApp wajib diisi.');
       return;
     }
+    if (!/^\d+$/.test(noWa.trim())) {
+      setError('Nomor WhatsApp hanya boleh berisi angka.');
+      return;
+    }
+    if (noWa.trim().length < 10) {
+      setError('Nomor WhatsApp minimal 10 digit.');
+      return;
+    }
     setError('');
     const peserta = { nama: nama.trim(), noWa: noWa.trim(), waktuMulai: new Date().toISOString() };
     sessionStorage.setItem('tryout_peserta', JSON.stringify(peserta));
@@ -51,9 +61,12 @@ export default function PilihPaket() {
       <Head>
         <title>Try Out dan Latihan SKD</title>
       </Head>
-      <main className="min-h-screen bg-slate-50 px-4 sm:px-6 py-8">
+      <main className="min-h-screen bg-slate-50 dark:bg-navy-900 px-4 sm:px-6 py-8">
         <div className="max-w-3xl mx-auto">
-          <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Try Out dan Latihan SKD' }]} />
+          <div className="flex items-center justify-between mb-3">
+            <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Try Out dan Latihan SKD' }]} />
+            <ThemeToggle />
+          </div>
 
           {/* Banner — ganti file public/banner.png dengan gambar sendiri, ukuran disarankan 1200x300px */}
           <img
@@ -62,41 +75,42 @@ export default function PilihPaket() {
             className="w-full rounded-xl mb-6 object-cover"
           />
 
-          <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 mb-6">Try Out dan Latihan SKD</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 dark:text-slate-100 mb-6">Try Out dan Latihan SKD</h1>
 
           {!identitasTersimpan && (
             <form
               onSubmit={simpanIdentitas}
-              className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6 mb-6"
+              className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm p-5 sm:p-6 mb-6"
             >
-              <h2 className="font-semibold text-navy-800 mb-1">Data Peserta</h2>
-              <p className="text-sm text-slate-500 mb-4">Isi identitas sekali saja sebelum memilih paket.</p>
+              <h2 className="font-semibold text-navy-800 dark:text-slate-200 mb-1">Data Peserta</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Isi identitas sekali saja sebelum memilih paket.</p>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-navy-700 mb-1">Nama Lengkap</label>
+                  <label className="block text-sm font-medium text-navy-700 dark:text-slate-300 mb-1">Nama Lengkap</label>
                   <input
                     type="text"
                     value={nama}
                     onChange={(e) => setNama(e.target.value)}
                     placeholder="Sesuai identitas"
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-brand-500"
+                    className="w-full border border-slate-300 dark:border-navy-600 dark:bg-navy-900 dark:text-slate-100 rounded-lg px-3 py-2 text-sm focus:border-brand-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-navy-700 mb-1">Nomor WhatsApp</label>
+                  <label className="block text-sm font-medium text-navy-700 dark:text-slate-300 mb-1">Nomor WhatsApp</label>
                   <input
                     type="tel"
+                    inputMode="numeric"
                     value={noWa}
-                    onChange={(e) => setNoWa(e.target.value)}
+                    onChange={(e) => setNoWa(e.target.value.replace(/\D/g, ''))}
                     placeholder="Contoh: 081234567890"
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-brand-500"
+                    className="w-full border border-slate-300 dark:border-navy-600 dark:bg-navy-900 dark:text-slate-100 rounded-lg px-3 py-2 text-sm focus:border-brand-500"
                   />
                 </div>
               </div>
               {error && <p className="text-alarm-500 text-sm mt-3">{error}</p>}
               <button
                 type="submit"
-                className="mt-4 bg-navy-800 hover:bg-navy-900 text-white text-sm font-semibold px-5 py-2.5 rounded-lg"
+                className="mt-4 bg-navy-800 hover:bg-navy-900 dark:bg-brand-600 dark:hover:bg-brand-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg"
               >
                 Simpan & Lanjutkan
               </button>
@@ -104,20 +118,20 @@ export default function PilihPaket() {
           )}
 
           {identitasTersimpan && (
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm px-5 py-3 mb-6 flex items-center justify-between">
-              <p className="text-sm text-navy-700">
+            <div className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm px-5 py-3 mb-6 flex items-center justify-between">
+              <p className="text-sm text-navy-700 dark:text-slate-300">
                 Peserta: <span className="font-semibold">{nama}</span>
               </p>
               <button
                 onClick={() => setIdentitasTersimpan(false)}
-                className="text-sm text-brand-600 font-medium hover:underline"
+                className="text-sm text-brand-600 dark:text-brand-400 font-medium hover:underline"
               >
                 Ganti
               </button>
             </div>
           )}
 
-          <h2 className="text-sm font-semibold text-slate-500 mb-3 tracking-wide">PAKET TERSEDIA</h2>
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 tracking-wide">PAKET TERSEDIA</h2>
 
           {daftarPaket === null && (
             <p className="text-sm text-slate-400">Memuat daftar paket…</p>
@@ -132,20 +146,20 @@ export default function PilihPaket() {
               <button
                 key={kode}
                 onClick={() => pilihPaket(kode)}
-                className="w-full text-left bg-white rounded-xl border border-slate-200 shadow-sm hover:border-brand-400 hover:shadow-md transition-all p-5 sm:p-6"
+                className="w-full text-left bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm hover:border-brand-400 hover:shadow-md transition-all p-5 sm:p-6"
               >
-                <h3 className="text-lg sm:text-xl font-bold text-navy-900 mb-1">{formatJudulPaket(kode)}</h3>
-                <p className="text-sm text-slate-500 mb-4">
+                <h3 className="text-lg sm:text-xl font-bold text-navy-900 dark:text-slate-100 mb-1">{formatJudulPaket(kode)}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
                   Simulasi ujian Computer Assisted Test — TWK, TIU, dan TKP.
                 </p>
                 <div className="grid grid-cols-2 gap-3 max-w-sm">
-                  <div className="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
-                    <p className="text-xs text-slate-500 mb-1">JUMLAH SOAL</p>
-                    <p className="text-xl font-bold text-navy-900">{jumlah} soal</p>
+                  <div className="bg-slate-50 dark:bg-navy-700 border border-slate-200 dark:border-navy-600 rounded-lg px-4 py-3">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">JUMLAH SOAL</p>
+                    <p className="text-xl font-bold text-navy-900 dark:text-slate-100">{jumlah} soal</p>
                   </div>
-                  <div className="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
-                    <p className="text-xs text-slate-500 mb-1">DURASI</p>
-                    <p className="text-xl font-bold text-navy-900">30 menit</p>
+                  <div className="bg-slate-50 dark:bg-navy-700 border border-slate-200 dark:border-navy-600 rounded-lg px-4 py-3">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">DURASI</p>
+                    <p className="text-xl font-bold text-navy-900 dark:text-slate-100">30 menit</p>
                   </div>
                 </div>
               </button>
@@ -155,6 +169,12 @@ export default function PilihPaket() {
           {error && (
             <p className="text-alarm-500 text-sm mt-4">{error}</p>
           )}
+
+          <div className="text-center mt-10">
+            <Link href="/admin" className="text-xs text-slate-400 dark:text-slate-500 hover:text-slate-500 dark:hover:text-slate-400">
+              Admin
+            </Link>
+          </div>
         </div>
       </main>
     </>
