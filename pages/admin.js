@@ -13,8 +13,11 @@ export default function Admin() {
   const [hasil, setHasil] = useState([]);
   const [soal, setSoal] = useState([]);
   const [urutBerdasar, setUrutBerdasar] = useState('skor');
-  const [tab, setTab] = useState('hasil'); // 'hasil' | 'soal'
+  const [tab, setTab] = useState('hasil'); // 'hasil' | 'soal' | 'instan'
   const [filterPaket, setFilterPaket] = useState('semua');
+  const [instanPaket, setInstanPaket] = useState(null); // kode paket yang dipilih utk mode instan
+  const [instanIndex, setInstanIndex] = useState(0);
+  const [instanJawaban, setInstanJawaban] = useState(null); // huruf yg diklik utk soal aktif
 
   useEffect(() => {
     if (sessionStorage.getItem('tryout_admin_ok') === '1') {
@@ -64,6 +67,27 @@ export default function Admin() {
     if (filterPaket === 'semua') return soal;
     return soal.filter((s) => (s.kode || 'SOAL1') === filterPaket);
   }, [soal, filterPaket]);
+
+  const soalInstan = useMemo(() => {
+    if (!instanPaket) return [];
+    return soal.filter((s) => (s.kode || 'SOAL1') === instanPaket);
+  }, [soal, instanPaket]);
+
+  const soalInstanAktif = soalInstan[instanIndex];
+
+  function pilihJawabanInstan(huruf) {
+    setInstanJawaban(huruf);
+  }
+
+  function soalInstanBerikutnya() {
+    setInstanIndex((i) => Math.min(i + 1, soalInstan.length - 1));
+    setInstanJawaban(null);
+  }
+
+  function soalInstanSebelumnya() {
+    setInstanIndex((i) => Math.max(i - 1, 0));
+    setInstanJawaban(null);
+  }
 
   const rataSkor = hasil.length
     ? Math.round(hasil.reduce((sum, h) => sum + (Number(h.skor) || 0), 0) / hasil.length)
@@ -164,6 +188,16 @@ export default function Admin() {
               }`}
             >
               Bank Soal & Kunci
+            </button>
+            <button
+              onClick={() => setTab('instan')}
+              className={`text-sm font-medium px-4 py-2 rounded-lg border ${
+                tab === 'instan'
+                  ? 'bg-navy-800 border-navy-800 text-white'
+                  : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              Mode Instan (Konten)
             </button>
           </div>
 
@@ -321,6 +355,129 @@ export default function Admin() {
                   <p className="text-center text-slate-400 py-8">Belum ada soal.</p>
                 )}
               </div>
+            </>
+          )}
+
+          {tab === 'instan' && (
+            <>
+              {!instanPaket && (
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                  <h2 className="font-semibold text-navy-900 mb-1">Pilih paket dulu</h2>
+                  <p className="text-sm text-slate-500 mb-4">
+                    Soal akan muncul satu-satu. Begitu jawaban diklik, langsung kelihatan benar/salahnya —
+                    cocok buat rekam konten sambil menjelaskan.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {daftarKodePaket.map((k) => (
+                      <button
+                        key={k}
+                        onClick={() => {
+                          setInstanPaket(k);
+                          setInstanIndex(0);
+                          setInstanJawaban(null);
+                        }}
+                        className="text-sm font-medium px-4 py-2 rounded-lg border border-slate-300 text-navy-700 hover:bg-slate-50"
+                      >
+                        {formatJudulPaket(k)}
+                      </button>
+                    ))}
+                    {daftarKodePaket.length === 0 && (
+                      <p className="text-sm text-slate-400">Belum ada soal.</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {instanPaket && soalInstanAktif && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <button
+                      onClick={() => setInstanPaket(null)}
+                      className="text-sm text-brand-600 font-medium hover:underline"
+                    >
+                      ← Ganti paket
+                    </button>
+                    <span className="text-sm text-slate-500">
+                      {formatJudulPaket(instanPaket)} — Soal {instanIndex + 1} / {soalInstan.length}
+                    </span>
+                  </div>
+
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-xs font-bold bg-navy-800 text-white px-2.5 py-1 rounded">
+                        No. {instanIndex + 1}
+                      </span>
+                      <span className="text-xs font-medium bg-slate-100 text-navy-600 px-2.5 py-1 rounded">
+                        {soalInstanAktif.kategori}
+                      </span>
+                    </div>
+
+                    <p className="text-navy-900 leading-relaxed mb-6 whitespace-pre-line">
+                      {soalInstanAktif.soal}
+                    </p>
+
+                    <div className="space-y-2.5">
+                      {['A', 'B', 'C', 'D', 'E'].map((huruf) => {
+                        const teks = soalInstanAktif[`pilihan${huruf}`];
+                        if (!teks && teks !== 0) return null;
+                        const dipilih = instanJawaban === huruf;
+                        const iniKunci = huruf === soalInstanAktif.kunci;
+
+                        let kelas = 'border-slate-200 hover:border-brand-300';
+                        if (instanJawaban) {
+                          if (iniKunci) kelas = 'border-emeraldx-500 bg-emeraldx-50';
+                          else if (dipilih) kelas = 'border-alarm-500 bg-alarm-50';
+                        }
+
+                        return (
+                          <button
+                            key={huruf}
+                            onClick={() => pilihJawabanInstan(huruf)}
+                            disabled={Boolean(instanJawaban)}
+                            className={`w-full flex gap-3 items-center border rounded-xl px-4 py-3.5 text-left transition-colors ${kelas}`}
+                          >
+                            <span
+                              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                                instanJawaban && iniKunci
+                                  ? 'bg-emeraldx-500 text-white'
+                                  : instanJawaban && dipilih
+                                  ? 'bg-alarm-500 text-white'
+                                  : 'bg-slate-200 text-navy-600'
+                              }`}
+                            >
+                              {huruf}
+                            </span>
+                            <span className="text-sm text-navy-800 flex-1">{teks}</span>
+                            {instanJawaban && iniKunci && (
+                              <span className="text-xs font-semibold text-emeraldx-700">✓ Benar</span>
+                            )}
+                            {instanJawaban && dipilih && !iniKunci && (
+                              <span className="text-xs font-semibold text-alarm-600">✗ Salah</span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex items-center justify-between mt-6 pt-5 border-t border-slate-100">
+                      <button
+                        onClick={soalInstanSebelumnya}
+                        disabled={instanIndex === 0}
+                        className="px-5 py-2.5 text-sm font-medium text-navy-700 border border-slate-300 rounded-lg disabled:opacity-40"
+                      >
+                        ‹ Sebelumnya
+                      </button>
+                      <button
+                        onClick={soalInstanBerikutnya}
+                        disabled={instanIndex === soalInstan.length - 1}
+                        className="px-5 py-2.5 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-lg disabled:opacity-40"
+                      >
+                        Soal Berikutnya ›
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>
