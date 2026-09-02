@@ -94,24 +94,17 @@ export default function Admin() {
     ? Math.round(hasil.reduce((sum, h) => sum + (Number(h.skor) || 0), 0) / hasil.length)
     : 0;
 
-  function exportCsv() {
-    const header = ['nama', 'noWa', 'paket', 'skor', 'benar', 'salah', 'kosong', 'waktuSelesai'];
-    const rows = hasilTerurut.map((h) => header.map((k) => `"${String(h[k] ?? '').replace(/"/g, '""')}"`).join(','));
-    const csv = [header.join(','), ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `hasil-tryout-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+  function logout() {
+    sessionStorage.removeItem('tryout_admin_ok');
+    setTerbuka(false);
+    setPasswordInput('');
   }
 
   if (!terbuka) {
     return (
       <>
         <Head>
-          <title>Admin — Tryout CPNS</title>
+          <title>Admin — Belajar Bareng Mada</title>
         </Head>
         <main className="min-h-screen bg-navy-900 flex items-center justify-center px-4">
           <form
@@ -144,12 +137,12 @@ export default function Admin() {
   return (
     <>
       <Head>
-        <title>Admin — Hasil Tryout</title>
+        <title>Admin — Belajar Bareng Mada</title>
       </Head>
       <main className="min-h-screen bg-slate-50 px-4 sm:px-6 py-8">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-            <h1 className="text-2xl sm:text-3xl font-bold text-navy-900">Hasil Tryout</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-navy-900">Belajar Bareng Mada</h1>
             <div className="flex gap-2">
               <button
                 onClick={muatData}
@@ -159,11 +152,10 @@ export default function Admin() {
                 {loading ? 'Memuat…' : '↻ Refresh'}
               </button>
               <button
-                onClick={exportCsv}
-                disabled={hasil.length === 0}
-                className="px-4 py-2 text-sm font-medium bg-brand-600 hover:bg-brand-700 text-white rounded-lg disabled:opacity-50"
+                onClick={logout}
+                className="px-4 py-2 text-sm font-medium bg-alarm-500 hover:bg-alarm-600 text-white rounded-lg"
               >
-                ⬇ Export CSV
+                Logout
               </button>
             </div>
           </div>
